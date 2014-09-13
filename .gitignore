@@ -1,0 +1,16 @@
+lib-cov
+*.seed
+*.log
+*.dat
+*.out
+*.pid
+*.gz
+doc/out
+.settings
+pids
+logs/*.*
+results
+build
+.DS_Store
+.c9revisions/
+node_modules/

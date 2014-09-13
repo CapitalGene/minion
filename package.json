@@ -1,0 +1,39 @@
+{
+  "name": "minion",
+  "version": "0.1.0",
+  "description": "minion",
+  "main": "lib/index.js",
+  "private": true,
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@lcsrc.cloudapp.net:capitalgene/minion.git"
+  },
+  "author": "Chen Liang",
+  "license": "ISC",
+  "bugs": {
+    "url": "http://lcsrc.cloudapp.net/capitalgene/minion/issues"
+  },
+  "homepage": "http://lcsrc.cloudapp.net/capitalgene/minion",
+  "devDependencies": {
+    "chai": "^1.9.1",
+    "chai-as-promised": "^4.1.1",
+    "mocha": "^1.21.4",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.5.0"
+  },
+  "dependencies": {
+    "amqplib": "uschen/amqp.node",
+    "bluebird": ">=2.3.0",
+    "debug": ">=2.0.0",
+    "generic-pool": "^2.1.1",
+    "lodash": ">=2.4.1",
+    "moment-timezone": ">=0.2",
+    "node-uuid": "^1.4.1"
+  }
+}
