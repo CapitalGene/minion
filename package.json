@@ -28,10 +28,9 @@
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "amqplib": "uschen/amqp.node",
+    "broker-node": "git+ssh://git@lcsrc.cloudapp.net:capitalgene/broker-node.git",
     "bluebird": ">=2.3.0",
     "debug": ">=2.0.0",
-    "generic-pool": "^2.1.1",
     "lodash": ">=2.4.1",
     "moment-timezone": ">=0.2",
     "node-uuid": "^1.4.1"
