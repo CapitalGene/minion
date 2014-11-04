@@ -128,38 +128,40 @@ describe('App', function () {
         }
       });
     });
-    it('returns Task', function () {
+    it('returns a `Task` instance', function () {
       this.addTask.should.an.instanceOf(Task);
       this.addTaskAsync.should.be.an.instanceOf(Task);
     });
     it('#taskName should equal taskName', function () {
       this.addTask.name.should.equal('myApp.add');
     });
-    it('task can be called and return a promise', function (done) {
-      var add12 = this.addTask.exec({
-        number1: 1,
-        number2: 2
+    describe('returned task', function () {
+      it('can be called `.exec` and return a promise', function (done) {
+        var add12 = this.addTask.exec({
+          number1: 1,
+          number2: 2
+        });
+        var add23 = this.addTask.exec({
+          number1: 2,
+          number2: 3
+        });
+        Promise.all([add12, add23])
+          .should.eventually.deep.equal([3, 5])
+          .should.notify(done);
       });
-      var add23 = this.addTask.exec({
-        number1: 2,
-        number2: 3
+      it('with `promise` can be called and return a promise', function (done) {
+        var add12 = this.addTaskAsync.exec({
+          number1: 1,
+          number2: 2
+        });
+        var add23 = this.addTaskAsync.exec({
+          number1: 2,
+          number2: 3
+        });
+        Promise.all([add12, add23])
+          .should.eventually.deep.equal([3, 5])
+          .should.notify(done);
       });
-      Promise.all([add12, add23])
-        .should.eventually.deep.equal([3, 5])
-        .should.notify(done);
-    });
-    it('promise task can be called and return a promise', function (done) {
-      var add12 = this.addTaskAsync.exec({
-        number1: 1,
-        number2: 2
-      });
-      var add23 = this.addTaskAsync.exec({
-        number1: 2,
-        number2: 3
-      });
-      Promise.all([add12, add23])
-        .should.eventually.deep.equal([3, 5])
-        .should.notify(done);
     });
   });
   describe('#task(object, options).delay(taskObject)', function () {
@@ -228,6 +230,15 @@ describe('App', function () {
         })
         .should.notify(done);
     });
+    it('has `.taskId`', function () {
+      var job = this.addTask.delay({
+        number1: _.random(1, 100),
+        number2: _.random(1, 100)
+      });
+      job.should.have.property('taskId')
+        .that.is.a('string');
+      job.getTaskId().should.be.a('string');
+    });
     it('rejects if failed', function (done) {
       var self = this;
       this.rejectingTask.delay({})
@@ -288,6 +299,15 @@ describe('App', function () {
       Promise.all([add12, add23])
         .should.eventually.deep.equal([3, 5])
         .should.notify(done);
+    });
+    it('has `.taskId`', function () {
+      var job = this.app.do('myApp.addAsync', {
+        number1: 1,
+        number2: 2
+      });
+      job.should.have.property('taskId')
+        .that.is.a('string');
+      job.getTaskId().should.be.a('string');
     });
   });
 });
