@@ -12,23 +12,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@lcsrc.cloudapp.net:capitalgene/minion.git"
+    "url": "https://github.com/CapitalGene/minion.git"
   },
   "author": "Chen Liang",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "http://lcsrc.cloudapp.net/capitalgene/minion/issues"
+    "url": "https://github.com/CapitalGene/minion/issues"
   },
-  "homepage": "http://lcsrc.cloudapp.net/capitalgene/minion",
+  "homepage": "https://github.com/CapitalGene/minion",
   "devDependencies": {
     "chai": "^1.9.1",
     "chai-as-promised": "^4.1.1",
-    "mocha": "^1.21.4",
+    "mocha": "^2.0.1",
     "sinon": "^1.10.3",
     "sinon-chai": "^2.5.0"
   },
   "dependencies": {
-    "broker-node": "git+ssh://git@lcsrc.cloudapp.net:capitalgene/broker-node.git",
+    "broker-node": "CapitalGene/broker.node",
     "bluebird": ">=2.3.0",
     "debug": ">=2.0.0",
     "lodash": ">=2.4.1",
