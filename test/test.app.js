@@ -6,7 +6,7 @@
  */
 var App = require('./../lib').App;
 var Task = require('./../lib').Task;
-var Promise = require('bluebird');
+var Promise = require('./../lib/utils').Promise;
 var debug = require('debug')('minion:test:app');
 var _ = require('lodash');
 
