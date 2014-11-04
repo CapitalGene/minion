@@ -1,6 +1,8 @@
 'use strict';
 /**
  * Test App
+ *
+ * @author Chen Liang [code@chen.technology]
  */
 var App = require('./../lib').App;
 var Task = require('./../lib').Task;
@@ -9,11 +11,12 @@ var debug = require('debug')('minion:test:app');
 var _ = require('lodash');
 
 describe('App', function () {
+  this.timeout(5 * 1000);
   describe.skip('#connect()', function () {
     this.timeout(5000);
     beforeEach(function () {
       this.app = new App({
-        backend: 'amqp://cg_test:cg_test@rmq.cloudapp.net:25673/cg_test',
+        backend: this.testOptions.uri,
         exchangeName: 'myTask'
       });
       this.addTask = this.app.task({
@@ -106,7 +109,7 @@ describe('App', function () {
   describe('#task(object, options)', function () {
     before(function () {
       this.app = new App({
-        backend: 'amqp://cg_test:cg_test@rmq.cloudapp.net:25673/cg_test',
+        backend: this.testOptions.uri,
         exchangeName: 'myTask'
       });
       this.addTask = this.app.task({
@@ -164,7 +167,7 @@ describe('App', function () {
     before(function (done) {
       var self = this;
       this.app = new App({
-        backend: 'amqp://cg_test:cg_test@rmq.cloudapp.net:25673/cg_test',
+        backend: this.testOptions.uri,
         exchangeName: 'myTask'
       });
       this.addTask = this.app.task({
@@ -235,7 +238,7 @@ describe('App', function () {
   describe('#do(taskName, taskObject)', function () {
     before(function () {
       this.app = new App({
-        backend: 'amqp://cg_test:cg_test@rmq.cloudapp.net:25673/cg_test',
+        backend: this.testOptions.uri,
         exchangeName: 'myTask'
       });
       this.addTask = this.app.task({
