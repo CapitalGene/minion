@@ -187,6 +187,13 @@ describe('App', function () {
           });
         }
       });
+      this.addAddTask = this.app.task({
+        name: 'myApp.addAddTask',
+        handler: function (object) {
+          object = object || {};
+          return self.addTaskAsync.delay(object);
+        }
+      });
       this.rejectingTask = this.app.task({
         name: 'myApp.rejectingTask',
         handler: function (object) {
@@ -243,6 +250,14 @@ describe('App', function () {
       var self = this;
       this.rejectingTask.delay({})
         .should.be.rejectedWith('just reject')
+        .should.notify(done);
+    });
+    it('supports calling task in task', function (done) {
+      this.addAddTask.delay({
+        number1: 100,
+        number2: 200
+      })
+        .should.eventually.equal(300)
         .should.notify(done);
     });
   });
