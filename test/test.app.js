@@ -5,6 +5,7 @@
  * @author Chen Liang [code@chen.technology]
  */
 var App = require('./../lib').App;
+var Worker = require('./../lib').Worker;
 var Task = require('./../lib').Task;
 var Promise = require('./../lib/utils').Promise;
 var debug = require('debug')('minion:test:app');
@@ -165,7 +166,7 @@ describe('App', function () {
     });
   });
   describe('#task(object, options).delay(taskObject)', function () {
-    this.timeout(5000);
+    this.timeout(10 * 1000);
     before(function (done) {
       var self = this;
       this.app = new App({
@@ -200,8 +201,19 @@ describe('App', function () {
           return Promise.reject(new Error('just reject'));
         }
       });
+      this.ignoreResultTask = this.app.task({
+        name: 'myApp.ignoreResultTask',
+        handler: function (object) {
+          return Promise.resolve('result');
+        },
+        ignoreResult: true
+      });
+      this.worker = new Worker(this.app);
       // sinon.spy(this.app, 'useChannelToPublishToQueue');
       this.app.connect()
+        .then(function() {
+          return self.worker.connect();
+        })
         .should.notify(done);
     });
     it('will call `useChannelToPublishToQueue`', function (done) {
@@ -258,6 +270,28 @@ describe('App', function () {
         number2: 200
       })
         .should.eventually.equal(300)
+        .should.notify(done);
+    });
+    it('supports ignore result task', function (done) {
+      var task = this.ignoreResultTask.delay({
+        number1: 100,
+        number2: 200
+      });
+      var taskId = task.getTaskId();
+
+      task.delay(2 * 1000).should.eventually.equal(taskId)
+        .should.notify(done);
+    });
+    it('supports calling task with ignoreResult=true', function (done) {
+      var task = this.addTaskAsync.delay({
+        number1: 100,
+        number2: 200
+      }, {
+        ignoreResult: true
+      });
+      var taskId = task.getTaskId();
+
+      task.delay(2 * 1000).should.eventually.equal(taskId)
         .should.notify(done);
     });
   });
