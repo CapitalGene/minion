@@ -4,6 +4,10 @@
  *
  * @author Chen Liang [code@chen.technology]
  */
+
+/*!
+ * Module dependencies.
+ */
 var App = require('./../lib').App;
 var Worker = require('./../lib').Worker;
 var Task = require('./../lib').Task;
