@@ -215,7 +215,7 @@ describe('App', function () {
       this.worker = new Worker(this.app);
       // sinon.spy(this.app, 'useChannelToPublishToQueue');
       this.app.connect()
-        .then(function() {
+        .then(function () {
           return self.worker.connect();
         })
         .should.notify(done);
@@ -225,9 +225,9 @@ describe('App', function () {
       _.isEmpty(self.app.waitingForResult)
         .should.be.true;
       this.addTask.delay({
-        number1: 1,
-        number2: 2
-      })
+          number1: 1,
+          number2: 2
+        })
         .should.eventually.equal(3)
         .then(function () {
           // self.app.useChannelToPublishToQueue
@@ -270,9 +270,9 @@ describe('App', function () {
     });
     it('supports calling task in task', function (done) {
       this.addAddTask.delay({
-        number1: 100,
-        number2: 200
-      })
+          number1: 100,
+          number2: 200
+        })
         .should.eventually.equal(300)
         .should.notify(done);
     });
@@ -361,6 +361,39 @@ describe('App', function () {
       job.should.have.property('taskId')
         .that.is.a('string');
       job.getTaskId().should.be.a('string');
+    });
+  });
+  describe('#_getTaskQueues(options)', function () {
+    before(function () {
+      this.app = new App({
+        backend: this.testOptions.uri,
+        exchangeName: 'myTask'
+      });
+      this.addTask = this.app.task({
+        name: 'myApp.add',
+        handler: function (object) {
+          // {number1, number2}
+          return object.number1 + object.number2;
+        }
+      });
+      this.addTaskAsync = this.app.task({
+        name: 'myApp.addAsync',
+        handler: function (object) {
+          return new Promise(function (resolve, reject) {
+            return resolve(object.number1 + object.number2);
+          });
+        }
+      });
+    });
+    it('returns queues of tasks', function () {
+      this.app._getTaskQueues()
+        .should.have.lengthOf(2);
+    });
+    it('support config.queues=[queueName]', function () {
+      this.app._getTaskQueues({
+          queues: ['myApp.addAsync']
+        })
+        .should.have.lengthOf(1);
     });
   });
 });
