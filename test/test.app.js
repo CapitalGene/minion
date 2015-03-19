@@ -133,12 +133,13 @@ describe('App', function () {
         }
       });
     });
-    it('returns a `Task` instance', function () {
-      this.addTask.should.an.instanceOf(Task);
-      this.addTaskAsync.should.be.an.instanceOf(Task);
+    it('returns a `Task` subclass', function () {
+      // this.addTask.constructor.should.equal(Task);
+      // this.addTaskAsync.constructor.should.equal(Task);
+      (new this.addTask()).should.be.an.instanceOf(this.addTask);
     });
     it('#taskName should equal taskName', function () {
-      this.addTask.name.should.equal('myApp.add');
+      this.addTask.taskName.should.equal('myApp.add');
     });
     describe('returned task', function () {
       it('can be called `.exec` and return a promise', function (done) {
@@ -222,7 +223,7 @@ describe('App', function () {
     });
     it('will call `useChannelToPublishToQueue`', function (done) {
       var self = this;
-      _.isEmpty(self.app.waitingForResult)
+      _.isEmpty(self.addTask.waitingForResult)
         .should.be.true;
       this.addTask.delay({
           number1: 1,
@@ -232,7 +233,7 @@ describe('App', function () {
         .then(function () {
           // self.app.useChannelToPublishToQueue
           //  .should.have.been.called;
-          _.isEmpty(self.app.waitingForResult)
+          _.isEmpty(self.addTask.waitingForResult)
             .should.be.true;
         })
         .should.notify(done);
