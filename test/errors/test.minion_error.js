@@ -13,7 +13,7 @@ var errors = lib.errors;
 var MinionError = errors.MinionError;
 
 describe('errors', function () {
-  describe.only('MinionError', function () {
+  describe('MinionError', function () {
     it('is an instance of Error', function () {
       var message = 'some error';
       var err = new MinionError(message);
