@@ -17,6 +17,49 @@ var debug = require('debug')('minion:test:app');
 var _ = require('lodash');
 
 describe('Task', function () {
+  describe('.TaskContext(object)', function () {
+    it('is a function', function () {
+      Task.TaskContext.should.be.a('function');
+    });
+    it('has default values', function () {
+      var context = new Task.TaskContext();
+      context.should.deep.equal({
+        id: null,
+        object: null,
+        retries: 0,
+        eta: null,
+        expires: null,
+        isEager: false,
+        headers: null,
+        deliveryInfo: null,
+        replyTo: null,
+        correlationId: null,
+        publishedAt: null,
+        finishedAt: null,
+        timelimit: null
+      });
+    });
+    it('merge object values', function () {
+      var context = new Task.TaskContext({
+        id: 'test'
+      });
+      context.should.deep.equal({
+        id: 'test',
+        object: null,
+        retries: 0,
+        eta: null,
+        expires: null,
+        isEager: false,
+        headers: null,
+        deliveryInfo: null,
+        replyTo: null,
+        correlationId: null,
+        publishedAt: null,
+        finishedAt: null,
+        timelimit: null
+      });
+    });
+  });
   describe('#compile(app)', function () {
     var testTask;
     var testApp;
@@ -101,7 +144,7 @@ describe('Task', function () {
       it('.app = app', function () {
         CompiledTask.should.have.property('app', testApp);
       });
-      it('is a subclass of Task', function() {
+      it('is a subclass of Task', function () {
         CompiledTask.prototype.should.be.an.instanceOf(Task);
       });
       it('inherits from Task', function () {
