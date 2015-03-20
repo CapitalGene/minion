@@ -73,5 +73,6 @@
   "strict": true,
   "curly": true,
   "forin": true,
-  "freeze": true
+  "freeze": true,
+  "esnext": true
 }
