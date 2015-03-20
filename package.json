@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "bluebird": "^2.4.2",
-    "broker-node": "CapitalGene/broker.node",
+    "broker-node": "CapitalGene/broker.node#v0.0.4",
     "debug": ">=2.0.0",
     "lodash": ">=2.4.1",
     "moment-timezone": "^0.2.5",
