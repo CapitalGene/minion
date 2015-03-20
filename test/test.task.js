@@ -25,6 +25,7 @@ describe('Task', function () {
       var context = new Task.TaskContext();
       context.should.deep.equal({
         id: null,
+        status: null,
         object: null,
         retries: 0,
         eta: null,
@@ -45,6 +46,7 @@ describe('Task', function () {
       });
       context.should.deep.equal({
         id: 'test',
+        status: null,
         object: null,
         retries: 0,
         eta: null,
@@ -57,6 +59,65 @@ describe('Task', function () {
         publishedAt: null,
         finishedAt: null,
         timelimit: null
+      });
+    });
+    var headers = {
+      'x-minion-status': 'failed',
+      'x-minion-task-id': 'testId',
+      'x-minion-retries': '2',
+      'x-minion-expires': '123123',
+      'x-minion-published-at': '123',
+      'x-minion-finished-at': '1231'
+    };
+    describe('.populateFromHeaders(context,headers)', function () {
+
+      it('set headers and map props', function () {
+        var context = new Task.TaskContext();
+        Task.TaskContext.populateFromHeaders(context, headers);
+        context.should.deep.equal({
+          id: 'testId',
+          status: 'failed',
+          object: null,
+          retries: '2',
+          eta: null,
+          expires: '123123',
+          isEager: false,
+          headers: headers,
+          deliveryInfo: null,
+          replyTo: null,
+          correlationId: null,
+          publishedAt: '123',
+          finishedAt: '1231',
+          timelimit: null
+        });
+      });
+    });
+    describe('.populateFromMessage(context, message)', function () {
+      var message = new broker.Message({
+        deliveryInfo: 'di',
+        correlationId: 'cor',
+        replyTo: 'r',
+        headers: headers
+      });
+      it('merge with headers', function () {
+        var context = new Task.TaskContext();
+        Task.TaskContext.populateFromMessage(context, message);
+        context.should.deep.equal({
+          id: 'testId',
+          status: 'failed',
+          object: null,
+          retries: '2',
+          eta: null,
+          expires: '123123',
+          isEager: false,
+          headers: headers,
+          deliveryInfo: 'di',
+          replyTo: 'r',
+          correlationId: 'cor',
+          publishedAt: '123',
+          finishedAt: '1231',
+          timelimit: null
+        });
       });
     });
   });
@@ -140,6 +201,12 @@ describe('Task', function () {
       });
       after(function () {
         // CompiledTask = null;
+      });
+      it('takes TaskContext as arg', function() {
+        var context = new Task.TaskContext();
+        var tsk = new CompiledTask(context);
+        expect(tsk.message).to.not.exist;
+        tsk.context.should.deep.equal(context);
       });
       it('.app = app', function () {
         CompiledTask.should.have.property('app', testApp);
