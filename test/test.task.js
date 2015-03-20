@@ -32,7 +32,6 @@ describe('Task', function () {
         maxRetries: null,
         retryDelay: null,
         countdown: null,
-        eta: null,
         expires: null,
         isEager: false,
         headers: null,
@@ -56,7 +55,6 @@ describe('Task', function () {
         maxRetries: null,
         retryDelay: null,
         countdown: null,
-        eta: null,
         expires: null,
         isEager: false,
         headers: null,
@@ -91,7 +89,6 @@ describe('Task', function () {
           retries: 2,
           maxRetries: 20,
           retryDelay: 20,
-          eta: null,
           countdown: 1,
           expires: 123123,
           isEager: false,
@@ -123,7 +120,6 @@ describe('Task', function () {
           body: null,
           maxRetries: 20,
           retryDelay: 20,
-          eta: null,
           countdown: 1,
           expires: 123123,
           isEager: false,
@@ -465,7 +461,7 @@ describe('Task', function () {
           task.delay(2 * 1000).should.eventually.equal(taskId)
             .should.notify(done);
         });
-        describe('support options.countdown, eta', function () {
+        describe('support options.countdown', function () {
           it('delays countdown(ms)', function (done) {
             var startTime = Date.now();
             var task = this.addTaskAsync.delay({
@@ -473,40 +469,6 @@ describe('Task', function () {
               number2: 200
             }, {
               countdown: 4
-            });
-
-            task
-              .then(function (result) {
-                var endTime = Date.now();
-                result.should.equal(300);
-                (endTime - startTime).should.above(4 * 1000);
-              })
-              .should.notify(done);
-          });
-          it('delays until eta(timestamp)', function (done) {
-            var startTime = Date.now();
-            var task = this.addTaskAsync.delay({
-              number1: 100,
-              number2: 200
-            }, {
-              eta: Date.now() + 4 * 1000
-            });
-
-            task
-              .then(function (result) {
-                var endTime = Date.now();
-                result.should.equal(300);
-                (endTime - startTime).should.above(4 * 1000);
-              })
-              .should.notify(done);
-          });
-          it('delays until eta(Date)', function (done) {
-            var startTime = Date.now();
-            var task = this.addTaskAsync.delay({
-              number1: 100,
-              number2: 200
-            }, {
-              eta: new Date(Date.now() + 4 * 1000)
             });
 
             task
