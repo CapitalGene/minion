@@ -10,6 +10,7 @@
  */
 var broker = require('broker-node');
 var App = require('./../lib').App;
+var errors = require('./../lib').errors;
 var Worker = require('./../lib').Worker;
 var Task = require('./../lib').Task;
 var Promise = require('./../lib/utils').Promise;
@@ -124,6 +125,7 @@ describe('Task', function () {
   describe('#compile(app)', function () {
     var testTask;
     var testApp;
+    var rejectRejectStub = sinon.stub();
     before(function () {
       var self = this;
       testTask = new Task({
@@ -176,6 +178,13 @@ describe('Task', function () {
         },
         ignoreResult: true
       });
+      this.rejectRejectTask = testApp.task({
+        name: 'myApp.rejectRejectTask',
+        handler: function (object) {
+          debug('rejectRejectTask');
+          return rejectRejectStub();
+        }
+      });
     });
     after(function () {
       testTask = null;
@@ -202,7 +211,7 @@ describe('Task', function () {
       after(function () {
         // CompiledTask = null;
       });
-      it('takes TaskContext as arg', function() {
+      it('takes TaskContext as arg', function () {
         var context = new Task.TaskContext();
         var tsk = new CompiledTask(context);
         expect(tsk.message).to.not.exist;
@@ -389,6 +398,26 @@ describe('Task', function () {
                 result.should.equal(300);
                 (endTime - startTime).should.above(4 * 1000);
               })
+              .should.notify(done);
+          });
+        });
+        describe('support reject with errors.Reject', function () {
+          beforeEach(function () {
+            rejectRejectStub.onFirstCall().returns(
+              Promise.reject(
+                new errors.Reject('testing reject', 'no reason', true)
+              )
+            );
+            rejectRejectStub.onSecondCall().returns(
+              Promise.resolve('second tried')
+            );
+          });
+          afterEach(function () {
+            rejectRejectStub.reset();
+          });
+          it('requeues if Reject with requeue = true', function (done) {
+            this.rejectRejectTask.delay()
+              .should.eventually.equal('second tried')
               .should.notify(done);
           });
         });
