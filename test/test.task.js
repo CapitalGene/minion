@@ -171,8 +171,10 @@ describe('Task', function () {
           id: 'contextId',
           correlationId: 'corId'
         }),
-        resultQueue: {
-          name: 'resultQueueName'
+        app: {
+          resultQueue: {
+            name: 'resultQueueName'
+          }
         },
         getCorrelationId: function () {
           return 'corId1';
@@ -369,11 +371,11 @@ describe('Task', function () {
       });
       describe('when called without new', function () {
         before(function () {
-          sinon.spy(CompiledTask, 'returnMessageHandler');
+          sinon.spy(CompiledTask.app, 'returnMessageHandler');
         });
         after(function () {
-          CompiledTask.returnMessageHandler.should.have.not.been.called;
-          CompiledTask.returnMessageHandler.restore();
+          CompiledTask.app.returnMessageHandler.should.have.not.been.called;
+          CompiledTask.app.returnMessageHandler.restore();
         });
         it('should not return an insance of CompiledTask', function () {
           var t = CompiledTask('test');
@@ -392,10 +394,10 @@ describe('Task', function () {
       });
       describe('.delay(object, options)', function () {
         before(function () {
-          sinon.spy(CompiledTask.resultConsumer, 'messageHandler');
+          sinon.spy(CompiledTask.app.resultConsumer, 'messageHandler');
         });
         after(function () {
-          CompiledTask.resultConsumer.messageHandler.restore();
+          CompiledTask.app.resultConsumer.messageHandler.restore();
         });
         it('is a function', function () {
           CompiledTask.should.have.property('delay')
@@ -405,7 +407,7 @@ describe('Task', function () {
           CompiledTask.delay('test1')
             .should.eventually.equal('test1')
             .then(function () {
-              CompiledTask.resultConsumer.messageHandler.should.have.been.called.once;
+              CompiledTask.app.resultConsumer.messageHandler.should.have.been.called.once;
             })
             .should.notify(done);
         });
@@ -548,12 +550,6 @@ describe('Task', function () {
         });
         it('will call handler and return a Promise', function (done) {
           done();
-        });
-      });
-      describe('.start()', function () {
-        it('is a function', function () {
-          Task.should.not.have.property('start');
-          CompiledTask.start.should.be.a('function');
         });
       });
     });
