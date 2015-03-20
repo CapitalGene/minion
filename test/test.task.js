@@ -298,6 +298,15 @@ describe('Task', function () {
         },
         retryDelay: 2
       });
+      this.slowTask = testApp.task({
+        name: 'myApp.slowTask',
+        handler: function (object) {
+          return Promise.delay(3 * 1000)
+            .then(function () {
+              return object;
+            });
+        }
+      });
     });
     after(function () {
       testTask = null;
@@ -500,19 +509,28 @@ describe('Task', function () {
               .should.notify(done);
           });
         });
+        describe('supports options.requestTimeout', function () {
+          it('rejects with RequestTimeoutError when timeout', function (done) {
+            this.slowTask.delay('slow', {
+                requestTimeout: 2 * 1000
+              })
+              .should.be.rejectedWith(errors.RequestTimeoutError)
+              .should.notify(done);
+          });
+        });
         describe('support errors.Retry', function () {
           beforeEach(function (done) {
             rejectRetryStub.onFirstCall().throws(
-                new errors.Retry('testing retry 1')
+              new errors.Retry('testing retry 1')
             );
             rejectRetryStub.onSecondCall().throws(
-                new errors.Retry('testing retry 2')
+              new errors.Retry('testing retry 2')
             );
             rejectRetryStub.onThirdCall().returns(
               Promise.resolve('testing retry 2')
             );
             this.rejectRetryTask.queue.purge()
-            .should.notify(done);
+              .should.notify(done);
           });
           afterEach(function () {
             rejectRetryStub.reset();
