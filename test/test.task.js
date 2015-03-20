@@ -542,7 +542,7 @@ describe('Task', function () {
           });
         });
       });
-      describe('.exec()', function () {
+      describe.skip('.exec()', function () {
         before(function () {
 
         });
