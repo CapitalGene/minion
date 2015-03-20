@@ -30,6 +30,7 @@ describe('Task', function () {
         object: null,
         retries: '0',
         maxRetries: null,
+        retryDelay: null,
         countdown: null,
         eta: null,
         expires: null,
@@ -53,6 +54,7 @@ describe('Task', function () {
         object: null,
         retries: '0',
         maxRetries: null,
+        retryDelay: null,
         countdown: null,
         eta: null,
         expires: null,
@@ -72,6 +74,7 @@ describe('Task', function () {
       'x-minion-retries': '2',
       'x-minion-countdown': '1',
       'x-minion-max-retries': '20',
+      'x-minion-retry-delay': '20',
       'x-minion-expires': '123123',
       'x-minion-published-at': '123',
       'x-minion-finished-at': '1231'
@@ -87,6 +90,7 @@ describe('Task', function () {
           object: null,
           retries: '2',
           maxRetries: '20',
+          retryDelay: '20',
           eta: null,
           countdown: '1',
           expires: '123123',
@@ -117,6 +121,7 @@ describe('Task', function () {
           object: null,
           retries: '2',
           maxRetries: '20',
+          retryDelay: '20',
           eta: null,
           countdown: '1',
           expires: '123123',
@@ -184,6 +189,44 @@ describe('Task', function () {
       headers.should.have.property('x-minion-task-id', 'testId');
       headers.should.have.property('x-minion-retries', '0');
       message.body.should.equal(payload);
+    });
+  });
+  describe('#getRetries()', function () {
+    it('returns 0 when no context or not a string number', function () {
+      Task.prototype.getRetries.call({
+          context: {}
+        })
+        .should.equal(0);
+      Task.prototype.getRetries.call({
+
+        })
+        .should.equal(0);
+      Task.prototype.getRetries.call({
+          context: {
+            retries: null
+          }
+        })
+        .should.equal(0);
+      Task.prototype.getRetries.call({
+          context: {
+            retries: 'a'
+          }
+        })
+        .should.equal(0);
+    });
+    it('returns Int if exist', function () {
+      Task.prototype.getRetries.call({
+          context: {
+            retries: '0'
+          }
+        })
+        .should.equal(0);
+      Task.prototype.getRetries.call({
+          context: {
+            retries: '1'
+          }
+        })
+        .should.equal(1);
     });
   });
   describe('#compile(app)', function () {
