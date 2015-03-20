@@ -28,7 +28,9 @@ describe('Task', function () {
         id: null,
         status: null,
         object: null,
-        retries: 0,
+        retries: '0',
+        maxRetries: null,
+        countdown: null,
         eta: null,
         expires: null,
         isEager: false,
@@ -49,7 +51,9 @@ describe('Task', function () {
         id: 'test',
         status: null,
         object: null,
-        retries: 0,
+        retries: '0',
+        maxRetries: null,
+        countdown: null,
         eta: null,
         expires: null,
         isEager: false,
@@ -66,6 +70,8 @@ describe('Task', function () {
       'x-minion-status': 'failed',
       'x-minion-task-id': 'testId',
       'x-minion-retries': '2',
+      'x-minion-countdown': '1',
+      'x-minion-max-retries': '20',
       'x-minion-expires': '123123',
       'x-minion-published-at': '123',
       'x-minion-finished-at': '1231'
@@ -80,7 +86,9 @@ describe('Task', function () {
           status: 'failed',
           object: null,
           retries: '2',
+          maxRetries: '20',
           eta: null,
+          countdown: '1',
           expires: '123123',
           isEager: false,
           headers: headers,
@@ -108,7 +116,9 @@ describe('Task', function () {
           status: 'failed',
           object: null,
           retries: '2',
+          maxRetries: '20',
           eta: null,
+          countdown: '1',
           expires: '123123',
           isEager: false,
           headers: headers,
@@ -126,7 +136,9 @@ describe('Task', function () {
         id: 'testId',
         status: 'failed',
         retries: '2',
+        maxRetries: '20',
         expires: '123123',
+        countdown: '1',
         publishedAt: '123',
         finishedAt: '1231'
       });
@@ -136,11 +148,42 @@ describe('Task', function () {
             'x-minion-status': 'failed',
             'x-minion-task-id': 'testId',
             'x-minion-retries': '2',
+            'x-minion-countdown': '1',
+            'x-minion-max-retries': '20',
             'x-minion-expires': '123123',
             'x-minion-published-at': '123',
             'x-minion-finished-at': '1231'
           });
       });
+    });
+  });
+  describe('#generateMessage(object, options)', function () {
+    it('uses Task.id for header and correlationId', function () {
+      var payload = 'test';
+      var message = Task.prototype.generateMessage.call({
+        name: 'testTask',
+        getId: function () {
+          return 'testId';
+        },
+        context: new Task.TaskContext({
+          id: 'contextId',
+          correlationId: 'corId'
+        }),
+        resultQueue: {
+          name: 'resultQueueName'
+        },
+        getCorrelationId: function () {
+          return 'corId1';
+        }
+      }, payload);
+      message.should.be.an.instanceOf(broker.Message);
+      message.correlationId.should.equal('corId1');
+      var headers = message.headers;
+      headers.should.have.property('taskName', 'testTask');
+      headers.should.have.property('publishedAt');
+      headers.should.have.property('x-minion-task-id', 'testId');
+      headers.should.have.property('x-minion-retries', '0');
+      message.body.should.equal(payload);
     });
   });
   describe('#compile(app)', function () {
