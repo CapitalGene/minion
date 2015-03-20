@@ -121,6 +121,27 @@ describe('Task', function () {
         });
       });
     });
+    describe('.toMessageHeaders(context)', function () {
+      var context = new Task.TaskContext({
+        id: 'testId',
+        status: 'failed',
+        retries: '2',
+        expires: '123123',
+        publishedAt: '123',
+        finishedAt: '1231'
+      });
+      it('returns headers{}', function () {
+        Task.TaskContext.toMessageHeaders(context)
+          .should.deep.equal({
+            'x-minion-status': 'failed',
+            'x-minion-task-id': 'testId',
+            'x-minion-retries': '2',
+            'x-minion-expires': '123123',
+            'x-minion-published-at': '123',
+            'x-minion-finished-at': '1231'
+          });
+      });
+    });
   });
   describe('#compile(app)', function () {
     var testTask;
