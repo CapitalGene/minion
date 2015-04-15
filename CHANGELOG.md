@@ -9,3 +9,4 @@
 * Rewrote `Task`, `App`
     - Enable Defined Task can be attached to different Apps
     - Moved publish logic to `App`
+* added jsdoc

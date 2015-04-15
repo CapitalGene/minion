@@ -1,6 +1,6 @@
 {
   "name": "minion",
-  "version": "0.2.0dev",
+  "version": "0.2.0",
   "description": "minion",
   "main": "lib/index.js",
   "private": true,
@@ -8,7 +8,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "generate-docs": "rm -rf docs/jsdoc_build && node_modules/.bin/jsdoc --configure .jsdoc.json --verbose"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,11 @@
   "devDependencies": {
     "chai": "^1.10.0",
     "chai-as-promised": "^4.1.1",
+    "ink-docstrap": "^0.5.2",
+    "jaguarjs-jsdoc": "0.0.1",
+    "jsdoc": "^3.3.0-beta3",
+    "jsdoc-oblivion": "0.0.4",
+    "minami": "^1.1.0",
     "mocha": "^2.1.0",
     "sinon": "^1.12.2",
     "sinon-chai": "^2.5.0"

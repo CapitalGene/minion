@@ -1,0 +1,47 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc"]
+  },
+
+  "source": {
+    "include": [
+      "lib"
+    ],
+    "exclude": [
+      "test"
+    ],
+    "includePattern": ".+\\.js(doc)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+
+  "plugins": ["plugins/markdown"],
+  "markdown": {
+    "excludeTags": ["author"],
+    "tags": ["example"],
+    "hardwrap": true
+  },
+
+
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": false,
+    "theme": "cerulean",
+    "navType": "inline",
+    "navType": "vertical",
+    "linenums": false,
+    "collapseSymbols": false,
+    "inverseNav": true
+  },
+
+  "opts": {
+    "encoding": "utf8",
+    "package": "./package.json",
+    "template": "./node_modules/ink-docstrap/template",
+    "destination": "./docs/jsdoc_build",
+    "recurse": true,
+    "query": "value",
+    "private": true,
+    "lenient": true
+  }
+}
