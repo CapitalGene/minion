@@ -1,5 +1,8 @@
 # Change Log
 
+## v0.2.1
+* *Worker* `.execTask` will `ack` if no replyTo or correlationId
+
 ## v0.2.0
 * [Task, Worker] Able to send delayed tasks by using `countdown`, `eta`
 * [Task, Worker] Able to handle `rejection` by using `throw` or `Promise.reject` with `errors.Reject`
