@@ -1,0 +1,10 @@
+test on commit:
+  type: test
+  script:
+    - git submodule update --init
+    - ls -la
+    - npm install
+    - make test
+  tags:
+  except:
+    - tags
