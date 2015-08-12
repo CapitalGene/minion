@@ -1,5 +1,11 @@
 # Change Log
 
+## v0.2.2
+* **deps**: broker-node#v0.0.10
+* added .esformatter
+* updated .eslintrc
+* added .gitlab-ci.yml
+
 ## v0.2.1
 * *Worker* `.execTask` will `ack` if no replyTo or correlationId
 
