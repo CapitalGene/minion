@@ -17,12 +17,12 @@ var Promise = require('./../lib/utils').Promise;
 var debug = require('debug')('minion:test:app');
 var _ = require('lodash');
 
-describe('Task', function () {
-  describe('.TaskContext(object)', function () {
-    it('is a function', function () {
+describe('Task', function() {
+  describe('.TaskContext(object)', function() {
+    it('is a function', function() {
       Task.TaskContext.should.be.a('function');
     });
-    it('has default values', function () {
+    it('has default values', function() {
       var context = new Task.TaskContext();
       context.should.deep.equal({
         id: null,
@@ -40,12 +40,12 @@ describe('Task', function () {
         correlationId: null,
         publishedAt: null,
         finishedAt: null,
-        timelimit: null
+        timelimit: null,
       });
     });
-    it('merge object values', function () {
+    it('merge object values', function() {
       var context = new Task.TaskContext({
-        id: 'test'
+        id: 'test',
       });
       context.should.deep.equal({
         id: 'test',
@@ -63,7 +63,7 @@ describe('Task', function () {
         correlationId: null,
         publishedAt: null,
         finishedAt: null,
-        timelimit: null
+        timelimit: null,
       });
     });
     var headers = {
@@ -75,11 +75,11 @@ describe('Task', function () {
       'x-minion-retry-delay': '20',
       'x-minion-expires': '123123',
       'x-minion-published-at': '123',
-      'x-minion-finished-at': '1231'
+      'x-minion-finished-at': '1231',
     };
-    describe('.populateFromHeaders(context,headers)', function () {
+    describe('.populateFromHeaders(context,headers)', function() {
 
-      it('set headers and map props', function () {
+      it('set headers and map props', function() {
         var context = new Task.TaskContext();
         Task.TaskContext.populateFromHeaders(context, headers);
         context.should.deep.equal({
@@ -98,18 +98,18 @@ describe('Task', function () {
           correlationId: null,
           publishedAt: 123,
           finishedAt: 1231,
-          timelimit: null
+          timelimit: null,
         });
       });
     });
-    describe('.populateFromMessage(context, message)', function () {
+    describe('.populateFromMessage(context, message)', function() {
       var message = new broker.Message({
         deliveryInfo: 'di',
         correlationId: 'cor',
         replyTo: 'r',
-        headers: headers
+        headers: headers,
       });
-      it('merge with headers', function () {
+      it('merge with headers', function() {
         var context = new Task.TaskContext();
         Task.TaskContext.populateFromMessage(context, message);
         context.should.deep.equal({
@@ -129,11 +129,11 @@ describe('Task', function () {
           correlationId: 'cor',
           publishedAt: 123,
           finishedAt: 1231,
-          timelimit: null
+          timelimit: null,
         });
       });
     });
-    describe('.toMessageHeaders(context)', function () {
+    describe('.toMessageHeaders(context)', function() {
       var context = new Task.TaskContext({
         id: 'testId',
         status: 'failed',
@@ -142,11 +142,12 @@ describe('Task', function () {
         expires: 123123,
         countdown: 1,
         publishedAt: 123,
-        finishedAt: 1231
+        finishedAt: 1231,
       });
-      it('returns headers{}', function () {
+      it('returns headers{}', function() {
         Task.TaskContext.toMessageHeaders(context)
-          .should.deep.equal({
+          .should.deep.equal(
+          {
             'x-minion-status': 'failed',
             'x-minion-task-id': 'testId',
             'x-minion-retries': '2',
@@ -154,31 +155,32 @@ describe('Task', function () {
             'x-minion-max-retries': '20',
             'x-minion-expires': '123123',
             'x-minion-published-at': '123',
-            'x-minion-finished-at': '1231'
-          });
+            'x-minion-finished-at': '1231',
+          }
+        );
       });
     });
   });
-  describe('#generateMessage(object, options)', function () {
-    it('uses Task.id for header and correlationId', function () {
+  describe('#generateMessage(object, options)', function() {
+    it('uses Task.id for header and correlationId', function() {
       var payload = 'test';
       var message = Task.prototype.generateMessage.call({
         name: 'testTask',
-        getId: function () {
+        getId: function() {
           return 'testId';
         },
         context: new Task.TaskContext({
           id: 'contextId',
-          correlationId: 'corId'
+          correlationId: 'corId',
         }),
         app: {
           resultQueue: {
-            name: 'resultQueueName'
-          }
+            name: 'resultQueueName',
+          },
         },
-        getCorrelationId: function () {
+        getCorrelationId: function() {
           return 'corId1';
-        }
+        },
       }, payload);
       message.should.be.an.instanceOf(broker.Message);
       message.correlationId.should.equal('corId1');
@@ -190,8 +192,8 @@ describe('Task', function () {
       message.body.should.equal(payload);
     });
   });
-  describe('#getRetries()', function () {
-    it('returns 0 when no context or not a string number', function () {
+  describe('#getRetries()', function() {
+    it('returns 0 when no context or not a string number', function() {
       // Task.prototype.getRetries.call({
       //     context: {}
       //   })
@@ -201,39 +203,39 @@ describe('Task', function () {
       //   })
       //   .should.equal(0);
       expect(Task.prototype.getRetries.call({
-          context: {
-            retries: null
-          }
-        }))
+        context: {
+          retries: null,
+        },
+      }))
         .to.equal(null);
-      // Task.prototype.getRetries.call({
-      //     context: {
-      //       retries: 'a'
-      //     }
-      //   })
-      //   .should.equal(0);
+    // Task.prototype.getRetries.call({
+    //     context: {
+    //       retries: 'a'
+    //     }
+    //   })
+    //   .should.equal(0);
     });
-    it('returns Int if exist', function () {
+    it('returns Int if exist', function() {
       Task.prototype.getRetries.call({
-          context: {
-            retries: 0
-          }
-        })
+        context: {
+          retries: 0,
+        },
+      })
         .should.equal(0);
       Task.prototype.getRetries.call({
-          context: {
-            retries: 1
-          }
-        })
+        context: {
+          retries: 1,
+        },
+      })
         .should.equal(1);
     });
   });
-  describe('#compile(app)', function () {
+  describe('#compile(app)', function() {
     var testTask;
     var testApp;
     var rejectRejectStub = sinon.stub();
     var rejectRetryStub = sinon.stub();
-    before(function () {
+    before(function() {
       var self = this;
       testTask = new Task({
         name: 'testTask',
@@ -241,10 +243,10 @@ describe('Task', function () {
         ignoreResult: false,
         maxRetries: 10,
         retryDelay: 10,
-        handler: function (object) {
+        handler: function(object) {
           debug('handler', object);
           return object;
-        }
+        },
       });
       testApp = new App({
         backend: this.testOptions.uri,
@@ -252,73 +254,73 @@ describe('Task', function () {
       });
       this.addTask = testApp.task({
         name: 'myApp.add',
-        handler: function (object) {
+        handler: function(object) {
           // {number1, number2}
           return object.number1 + object.number2;
-        }
+        },
       });
       this.addTaskAsync = testApp.task({
         name: 'myApp.addAsync',
-        handler: function (object) {
-          return new Promise(function (resolve, reject) {
+        handler: function(object) {
+          return new Promise(function(resolve, reject) {
             return resolve(object.number1 + object.number2);
           });
-        }
+        },
       });
       this.addAddTask = testApp.task({
         name: 'myApp.addAddTask',
-        handler: function (object) {
+        handler: function(object) {
           object = object || {};
           return self.addTaskAsync.delay(object);
-        }
+        },
       });
       this.rejectingTask = testApp.task({
         name: 'myApp.rejectingTask',
-        handler: function (object) {
+        handler: function(object) {
           return Promise.reject(new Error('just reject'));
-        }
+        },
       });
       this.ignoreResultTask = testApp.task({
         name: 'myApp.ignoreResultTask',
-        handler: function (object) {
+        handler: function(object) {
           return Promise.resolve('result');
         },
-        ignoreResult: true
+        ignoreResult: true,
       });
       this.rejectRejectTask = testApp.task({
         name: 'myApp.rejectRejectTask',
-        handler: function (object) {
+        handler: function(object) {
           debug('rejectRejectTask');
           return rejectRejectStub();
-        }
+        },
       });
       this.rejectRetryTask = testApp.task({
         name: 'myApp.rejectRetryTask',
-        handler: function (object) {
+        handler: function(object) {
           debug('rejectRetryTask');
           return rejectRetryStub();
         },
-        retryDelay: 2
+        retryDelay: 2,
       });
       this.slowTask = testApp.task({
         name: 'myApp.slowTask',
-        handler: function (object) {
+        handler: function(object) {
           return Promise.delay(3 * 1000)
-            .then(function () {
+            .then(function() {
               return object;
             });
-        }
+        },
       });
     });
-    after(function () {
+    after(function() {
       testTask = null;
       testApp = null;
     });
-    describe('compiled Task', function () {
+    describe('compiled Task', function() {
       this.timeout(10 * 1000);
       var CompiledTask;
       var t;
-      before(function (done) {
+      before(function(done) {
         var self = this;
         CompiledTask = testTask.compile(testApp);
 
@@ -326,28 +328,28 @@ describe('Task', function () {
         testApp.task(CompiledTask);
         // sinon.spy(this.app, 'useChannelToPublishToQueue');
         testApp.connect()
-          .then(function () {
+          .then(function() {
             t = new CompiledTask();
             return self.worker.connect();
           })
           .should.notify(done);
       });
-      after(function () {
+      after(function() {
         // CompiledTask = null;
       });
-      it('takes TaskContext as arg', function () {
+      it('takes TaskContext as arg', function() {
         var context = new Task.TaskContext();
         var tsk = new CompiledTask(context);
         expect(tsk.message).to.not.exist;
         tsk.context.should.deep.equal(context);
       });
-      it('.app = app', function () {
+      it('.app = app', function() {
         CompiledTask.should.have.property('app', testApp);
       });
-      it('is a subclass of Task', function () {
+      it('is a subclass of Task', function() {
         CompiledTask.prototype.should.be.an.instanceOf(Task);
       });
-      it('inherits from Task', function () {
+      it('inherits from Task', function() {
         t.should.be.an.instanceOf(CompiledTask);
         t.should.be.an.instanceOf(Task);
         t.should.have.property('app', testApp);
@@ -369,49 +371,49 @@ describe('Task', function () {
         t.should.have.property('retry')
           .that.is.a('function');
       });
-      describe('when called without new', function () {
-        before(function () {
+      describe('when called without new', function() {
+        before(function() {
           sinon.spy(CompiledTask.app, 'returnMessageHandler');
         });
-        after(function () {
+        after(function() {
           CompiledTask.app.returnMessageHandler.should.have.not.been.called;
           CompiledTask.app.returnMessageHandler.restore();
         });
-        it('should not return an insance of CompiledTask', function () {
+        it('should not return an insance of CompiledTask', function() {
           var t = CompiledTask('test');
           t.should.not.be.an.instanceOf(CompiledTask);
         });
-        it('call handler directly', function (done) {
+        it('call handler directly', function(done) {
           CompiledTask('test')
             .should.eventually.equal('test')
             .should.notify(done);
         });
       });
-      describe('when called with new', function () {
-        it('returns an instance of compiled task', function () {
+      describe('when called with new', function() {
+        it('returns an instance of compiled task', function() {
           (new CompiledTask()).should.be.an.instanceOf(CompiledTask);
         });
       });
-      describe('.delay(object, options)', function () {
-        before(function () {
+      describe('.delay(object, options)', function() {
+        before(function() {
           sinon.spy(CompiledTask.app.resultConsumer, 'messageHandler');
         });
-        after(function () {
+        after(function() {
           CompiledTask.app.resultConsumer.messageHandler.restore();
         });
-        it('is a function', function () {
+        it('is a function', function() {
           CompiledTask.should.have.property('delay')
             .that.is.a('function');
         });
-        it('sends tasks to broker', function (done) {
+        it('sends tasks to broker', function(done) {
           CompiledTask.delay('test1')
             .should.eventually.equal('test1')
-            .then(function () {
+            .then(function() {
               CompiledTask.app.resultConsumer.messageHandler.should.have.been.called.once;
             })
             .should.notify(done);
         });
-        it('handles 1000 tasks', function (done) {
+        it('handles 1000 tasks', function(done) {
           var tasks = [];
           for (var i = 0; i < 1000; i++) {
             tasks.push(CompiledTask.delay({
@@ -421,69 +423,69 @@ describe('Task', function () {
           }
           Promise.all(tasks)
             .should.eventually.be.an('array')
-            .then(function (result) {
+            .then(function(result) {
               // debug(result);
               result.should.have.lengthOf(1000);
             })
             .should.notify(done);
         });
-        it('has `.taskId`', function () {
+        it('has `.taskId`', function() {
           var job = CompiledTask.delay({
             number1: _.random(1, 100),
-            number2: _.random(1, 100)
+            number2: _.random(1, 100),
           });
           job.should.have.property('taskId')
             .that.is.a('string');
           job.getTaskId().should.be.a('string');
         });
-        it('rejects if failed', function (done) {
+        it('rejects if failed', function(done) {
           var self = this;
           this.rejectingTask.delay({})
             .should.be.rejectedWith('just reject')
             .should.notify(done);
         });
-        it('supports calling task in task', function (done) {
+        it('supports calling task in task', function(done) {
           this.addAddTask.delay({
-              number1: 100,
-              number2: 200
-            })
+            number1: 100,
+            number2: 200,
+          })
             .should.eventually.equal(300)
             .should.notify(done);
         });
-        it('supports ignore result task', function (done) {
+        it('supports ignore result task', function(done) {
           var task = this.ignoreResultTask.delay({
             number1: 100,
-            number2: 200
+            number2: 200,
           });
           var taskId = task.getTaskId();
 
           task.delay(2 * 1000).should.eventually.equal(taskId)
             .should.notify(done);
         });
-        it('supports calling task with ignoreResult=true', function (done) {
+        it('supports calling task with ignoreResult=true', function(done) {
           var task = this.addTaskAsync.delay({
             number1: 100,
-            number2: 200
+            number2: 200,
           }, {
-            ignoreResult: true
+            ignoreResult: true,
           });
           var taskId = task.getTaskId();
 
           task.delay(2 * 1000).should.eventually.equal(taskId)
             .should.notify(done);
         });
-        describe('support options.countdown', function () {
-          it('delays countdown(ms)', function (done) {
+        describe('support options.countdown', function() {
+          it('delays countdown(ms)', function(done) {
             var startTime = Date.now();
             var task = this.addTaskAsync.delay({
               number1: 100,
-              number2: 200
+              number2: 200,
             }, {
-              countdown: 4
+              countdown: 4,
             });
 
             task
-              .then(function (result) {
+              .then(function(result) {
                 var endTime = Date.now();
                 result.should.equal(300);
                 (endTime - startTime).should.above(4 * 1000);
@@ -491,8 +493,8 @@ describe('Task', function () {
               .should.notify(done);
           });
         });
-        describe('support reject with errors.Reject', function () {
-          beforeEach(function () {
+        describe('support reject with errors.Reject', function() {
+          beforeEach(function() {
             rejectRejectStub.onFirstCall().returns(
               Promise.reject(
                 new errors.Reject('testing reject', 'no reason', true)
@@ -502,26 +504,26 @@ describe('Task', function () {
               Promise.resolve('second tried')
             );
           });
-          afterEach(function () {
+          afterEach(function() {
             rejectRejectStub.reset();
           });
-          it('requeues if Reject with requeue = true', function (done) {
+          it('requeues if Reject with requeue = true', function(done) {
             this.rejectRejectTask.delay()
               .should.eventually.equal('second tried')
               .should.notify(done);
           });
         });
-        describe('supports options.requestTimeout', function () {
-          it('rejects with RequestTimeoutError when timeout', function (done) {
+        describe('supports options.requestTimeout', function() {
+          it('rejects with RequestTimeoutError when timeout', function(done) {
             this.slowTask.delay('slow', {
-                requestTimeout: 2 * 1000
-              })
+              requestTimeout: 2 * 1000,
+            })
               .should.be.rejectedWith(errors.RequestTimeoutError)
               .should.notify(done);
           });
         });
-        describe('support errors.Retry', function () {
-          beforeEach(function (done) {
+        describe('support errors.Retry', function() {
+          beforeEach(function(done) {
             rejectRetryStub.onFirstCall().throws(
               new errors.Retry('testing retry 1')
             );
@@ -534,21 +536,19 @@ describe('Task', function () {
             this.rejectRetryTask.queue.purge()
               .should.notify(done);
           });
-          afterEach(function () {
+          afterEach(function() {
             rejectRetryStub.reset();
           });
-          it('retry', function (done) {
+          it('retry', function(done) {
             this.rejectRetryTask.delay()
               .should.eventually.equal('testing retry 2')
               .should.notify(done);
           });
         });
       });
-      describe.skip('.exec()', function () {
-        before(function () {
-
-        });
-        it('will call handler and return a Promise', function (done) {
+      describe.skip('.exec()', function() {
+        before(function() {});
+        it('will call handler and return a Promise', function(done) {
           done();
         });
       });

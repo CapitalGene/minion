@@ -11,45 +11,45 @@
 var Promise = require('./../lib/utils').Promise;
 var LocalStack = require('./../lib/utils').LocalStack;
 
-describe('utils', function () {
-  describe('.Promise', function () {
-    describe('#getTaskId()', function () {
-      it('is a function', function () {
-        var q = new Promise(function () {});
+describe('utils', function() {
+  describe('.Promise', function() {
+    describe('#getTaskId()', function() {
+      it('is a function', function() {
+        var q = new Promise(function() {});
         expect(q.getTaskId).to.be.a('function');
       });
-      it('returns `#taskId`', function () {
-        var q = new Promise(function () {});
+      it('returns `#taskId`', function() {
+        var q = new Promise(function() {});
         q.taskId = 'sometaskId';
         q.getTaskId().should.equal('sometaskId');
       });
     });
-    describe('#setTaskId(taskId)', function () {
-      it('is a function', function () {
-        var q = new Promise(function () {});
+    describe('#setTaskId(taskId)', function() {
+      it('is a function', function() {
+        var q = new Promise(function() {});
         expect(q.setTaskId).to.be.a('function');
       });
-      it('sets `#taskId`', function () {
-        var q = new Promise(function () {});
+      it('sets `#taskId`', function() {
+        var q = new Promise(function() {});
         expect(q.taskId).to.not.exist;
         q.setTaskId('sometaskId');
         q.taskId.should.equal('sometaskId');
       });
     });
   });
-  describe('.LocalStack', function () {
+  describe('.LocalStack', function() {
     var stack;
-    beforeEach(function () {
+    beforeEach(function() {
       stack = new LocalStack();
     });
 
-    it('LIFO', function () {
+    it('LIFO', function() {
       stack.push('a');
       stack.push('b');
       stack.push('c');
       stack.pop().should.equal('c');
     });
-    it('keeps last on the top', function () {
+    it('keeps last on the top', function() {
       stack.push('a');
       stack.push('b');
       stack.push('c');
@@ -59,7 +59,7 @@ describe('utils', function () {
       stack.pop().should.equal('b');
       stack.top().should.equal('a');
     });
-    it('keeps first on the tail', function () {
+    it('keeps first on the tail', function() {
       stack.push('a');
       stack.push('b');
       stack.push('c');
@@ -69,7 +69,7 @@ describe('utils', function () {
       stack.pop().should.equal('b');
       stack.tail().should.equal('a');
     });
-    it('#(size) return stack size', function () {
+    it('#(size) return stack size', function() {
       stack.push('a');
       stack.push('b');
       stack.push('c');
@@ -79,7 +79,7 @@ describe('utils', function () {
       stack.pop();
       stack.size().should.equal(1);
     });
-    it('#flush() to empty', function () {
+    it('#flush() to empty', function() {
       stack.push('a');
       stack.push('b');
       stack.push('c');
