@@ -1,5 +1,9 @@
 # Change Log
 
+## v0.3.0
+* **worker**: instance of event emitter and emit `connection`
+* **worker**: added options.handlePingTank which will add `PingTask` to `app`
+
 ## v0.2.2
 * **deps**: broker-node#v0.0.10
 * added .esformatter
