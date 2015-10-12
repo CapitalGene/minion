@@ -418,7 +418,7 @@ describe('Task', function() {
           for (var i = 0; i < 1000; i++) {
             tasks.push(CompiledTask.delay({
               number1: _.random(1, 100),
-              number2: _.random(1, 100)
+              number2: _.random(1, 100),
             }));
           }
           Promise.all(tasks)

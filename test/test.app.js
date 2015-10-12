@@ -227,7 +227,7 @@ describe('App', function() {
     it('has `.taskId`', function() {
       var job = this.app.do('myApp.addAsync', {
         number1: 1,
-        number2: 2
+        number2: 2,
       });
       job.should.have.property('taskId')
         .that.is.a('string');

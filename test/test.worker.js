@@ -8,6 +8,7 @@
 /*!
  * Module dependencies.
  */
+var EventEmitter = require('events').EventEmitter;
 var App = require('./../lib').App;
 var Worker = require('./../lib').Worker;
 var Task = require('./../lib').Task;
@@ -17,7 +18,35 @@ var _ = require('lodash');
 
 describe('Worker(app, options)', function() {
   this.timeout(5 * 1000);
-
+  describe('events', function() {
+    before(function() {
+      this.app = new App({
+        backend: this.testOptions.uri,
+        exchangeName: 'myTask',
+      });
+      this.demoTask = this.app.task({
+        name: 'myApp.demo',
+        handler: function(object) {
+          return Promise.resolve();
+        },
+      });
+      this.worker = new Worker(this.app, {
+        prefetchCount: 1,
+      });
+    });
+    it('is an instance of EventEmitter', function() {
+      expect(this.worker).to.be.an.instanceOf(EventEmitter);
+    });
+    it('emits `connection` after connected', function(done) {
+      var self = this;
+      var handler = function() {
+        this.should.equal(self.worker);
+        done();
+      };
+      this.worker.on('connection', handler);
+      this.worker.connect();
+    });
+  });
   describe('options.prefetchCount', function() {
     var taskResolvers;
     var taskPayloads;
@@ -30,7 +59,7 @@ describe('Worker(app, options)', function() {
         exchangeName: 'myTask',
       });
       this.demoTask = this.app.task({
-        name: 'myApp.demo',
+        name: 'myApp.prefetchCountTest',
         handler: function(object) {
           taskPayloads.push(object);
           return new Promise(function(resolve) {
@@ -63,7 +92,7 @@ describe('Worker(app, options)', function() {
       var publishAndSetPromise = function(i) {
         return function() {
           publishingPromise = self.demoTask.delay('m' + i, {
-            ignoreResult: true
+            ignoreResult: true,
           });
         };
       };
@@ -114,7 +143,7 @@ describe('Worker(app, options)', function() {
           return new Promise(function(resolve) {
             taskResolvers.push(resolve);
           });
-        }
+        },
       });
       this.demoTask2 = this.app.task({
         name: 'myApp.demo2',
@@ -156,6 +185,37 @@ describe('Worker(app, options)', function() {
           taskResolvers.should.have.lengthOf(0);
           taskResolvers2.should.have.lengthOf(1);
           taskPayloads2.should.have.lengthOf(1);
+        })
+        .should.notify(done);
+    });
+  });
+  describe('options.handlePingTask', function() {
+    before(function(done) {
+      this.app = new App({
+        backend: this.testOptions.uri,
+        exchangeName: 'myTask',
+      });
+      this.demoTask = this.app.task({
+        name: 'myApp.demo',
+        handler: function(object) {
+          return Promise.resolve();
+        },
+      });
+      this.worker = new Worker(this.app, {
+        prefetchCount: 1,
+        handlePingTask: true,
+      });
+      this.worker.connect()
+        .should.notify(done);
+    });
+    it('add `PingTank` to app', function() {
+      this.app.tasks.should.have.property('minion.ping');
+    });
+    it('can emit and handle Ping task', function(done) {
+      this.app.do('minion.ping', {})
+        .then(function(res) {
+          expect(res).to.be.an('object');
+          res.should.have.property('message', 'pong');
         })
         .should.notify(done);
     });
